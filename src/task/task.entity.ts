@@ -1,9 +1,9 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { TaskStatus } from './task-status.enum';
 import { UserEntity } from '../auth/user.entity';
 
 @Entity('task')
-export class TaskEntity {
+export class TaskEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -19,4 +19,7 @@ export class TaskEntity {
   @ManyToOne(() => UserEntity, user => user.tasks, { eager: false })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
+
+  @Column({ name: 'user_id' })
+  userId: number;
 }
