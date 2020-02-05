@@ -20,8 +20,8 @@ export class UserEntity extends BaseEntity {
   @OneToMany(() => TaskEntity, task => task.user, { eager: true, onDelete: 'CASCADE' })
   tasks: TaskEntity[];
 
-  async validatePassword(password: string): Promise<boolean> {
-    const hash = await bcrypt.hash(password, this.salt);
+  async validatePassword(password: string, pepper: string): Promise<boolean> {
+    const hash = await bcrypt.hash(password, this.salt + pepper);
     return hash === this.password;
   }
 }

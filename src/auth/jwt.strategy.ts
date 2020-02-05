@@ -4,6 +4,9 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtPayload } from './jwt-payload.interface';
 import { UserRepository } from './user.repository';
+import * as config from 'config';
+
+const jwtConfig = config.get('jwt');
 
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -12,7 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: 'topSecret$1',
+      secretOrKey: jwtConfig.secret,
     });
   }
 

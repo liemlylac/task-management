@@ -1,8 +1,11 @@
+import { ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { UserEntity } from './user.entity';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
-import { ConflictException, InternalServerErrorException } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import * as config from 'config';
+
+const pepperConfig = config.get('pepper');
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
@@ -30,7 +33,7 @@ export class UserRepository extends Repository<UserEntity> {
     const { username, password } = authCredentialsDto;
     const user = await this.findOne({ username });
 
-    if (user && await user.validatePassword(password)) {
+    if (user && await user.validatePassword(password, pepperConfig.secret)) {
       return user.username;
     } else {
       return null;
@@ -39,6 +42,6 @@ export class UserRepository extends Repository<UserEntity> {
   }
 
   private async hashPassword(password: string, salt: string) {
-    return await bcrypt.hash(password, salt);
+    return await bcrypt.hash(password, salt + pepperConfig.secret);
   }
 }
